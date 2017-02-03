@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+    <head>
+        <% include ../partials/head %>
+        <title>Studio411 -
+            <%= name %></title>
+        <link rel="stylesheet" href="/css/watch.css">
+    </head>
+
+    <body class="container">
+
+        <header>
+            <% include ../partials/header %>
+        </header>
+
+        <main>
+            <h1><%= name %></h1>
+            <div id="loader-text-container text-center">
+                <p id="loading-text">En attente d'une réponse du serveur...</p>
+            </div>
+            <div id="loader-wrapper">
+                <div id="loader"></div>
+
+                <div class="loader-section section-left"></div>
+                <div class="loader-section section-right"></div>
+
+            </div>
+            <div class="text-center">
+                <div id="videoContainer">
+                    <video id="video" controls width="100%"></video>
+                </div>
+                <div class="row" id="info">
+                    <div class="col-md-3">
+                        <strong>Peers:</strong>
+                        <p id="peers"></p>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Down speed:</strong>
+                        <p id="ds"></p>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Up speed:</strong>
+                        <p id="us"></p>
+                    </div>
+
+                    <div class="col-md-3">
+                        <strong>Progress:</strong>
+                        <p id="pg"></p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+            <script type="text/javascript" src="https://cdn.jsdelivr.net/webtorrent/latest/webtorrent.min.js"></script>
+            <script type="text/javascript" src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+            <script type="text/javascript">
+                var socket = io();
+
+                $(document).ready(function() {
+                    socket.emit('watch', '<%= idT411 %>');
+
+                    socket.on('disconnect', function() {
+                        location.reload();
+                    });
+
+                    socket.on('next', function(message) {
+                        $('#loading-text').text(message);
+                    });
+
+                    socket.on('finish', function(magnet) {
+
+                        var client = new WebTorrent();
+
+                        client.add(magnet, function(torrent) {
+                            $('#loading-text').text("La vidéo va se streamer d'un instant à l'autre ! Préparez le pop-corn :)");
+
+                            function updateSpeed() {
+                                $("#peers").text(torrent.numPeers);
+                                $("#ds").text(Math.floor(torrent.downloadSpeed / 1000000) + "Mo/s");
+                                $("#us").text(Math.floor(torrent.uploadSpeed / 1000) + "ko/s");
+                                $("#pg").text(Math.floor(torrent.progress * 100) + "%");
+                            }
+
+                            torrent.on('download', updateSpeed);
+                            torrent.on('upload', updateSpeed);
+                            setInterval(updateSpeed, 1000);
+
+                            torrent.files.forEach(function(file) {
+                                // append file
+                                file.renderTo("#video", {
+                                    maxBlobLength: 10 * 1000 * 1000 * 1000 // 10 GB
+                                }, function(err, elem) {
+                                    if (err) {
+                                        console.log('Erreur:', err);
+                                        $("#loading_text").show();
+                                        $("#loading_text").text('Il y a une erreur: ' + err);
+                                        return;
+                                    };
+
+                                    $("#loading-text").remove();
+                                    $('body').addClass('loaded');
+                                });
+                            });
+                        });
+                    });
+                });
+            </script>
+            <% include ../partials/footer %>
+        </footer>
+
+    </body>
+
+</html>

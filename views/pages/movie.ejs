@@ -1,0 +1,136 @@
+<!-- views/pages/index.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <% include ../partials/head %>
+        <title><%= tmdb.title %></title>
+        <link rel="stylesheet" href="/css/movie.css">
+    </head>
+
+    <body class="container">
+
+        <header>
+            <% include ../partials/header %>
+        </header>
+
+        <main>
+            <div id="loader-wrapper">
+                <div id="loader"></div>
+
+                <div class="loader-section section-left"></div>
+                <div class="loader-section section-right"></div>
+
+            </div>
+            <div id="contenaire" class="jumbotron">
+                <!-- NAME -->
+                <h1><%= tmdb.title %></h1>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <!-- POSTER -->
+                        <img class="poster" src="https://image.tmdb.org/t/p/w342/<%= tmdb.poster_path %>">
+                    </div>
+                    <div class="col-md-8">
+                        <strong>
+                            <h3>Synospis:</h3>
+                        </strong>
+                        <!-- Synopsis -->
+                        <p><%= tmdb.overview %></p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <h3>Casting:</h3>
+                    <% for(var i = 0; i < tmdb.credits.castLen; i++) { %>
+                        <div class="col-md-2">
+                            <% if (tmdb.credits.cast[i].profile_path) { %>
+                                <img class="img-responsive" src="https://image.tmdb.org/t/p/w342/<%= tmdb.credits.cast[i].profile_path %>">
+                            <% } else { %>
+                                <img class="img-responsive" src="/img/missing.jpg">
+                            <% } %>
+                            <a href="/movie/artist/<%= tmdb.credits.cast[i].id %>">
+                                <p><%= tmdb.credits.cast[i].name %></p>
+                            </a>
+                            <p><%= tmdb.credits.cast[i].character %></p>
+                        </div>
+                    <% } %>
+                </div>
+
+                <div class="row">
+                    <h3>Crew:</h3>
+                    <% for(var i = 0; i < tmdb.credits.crewLen; i++) { %>
+                        <div class="col-md-2">
+                            <% if (tmdb.credits.crew[i].profile_path) { %>
+                                <img class="img-responsive" src="https://image.tmdb.org/t/p/w342/<%= tmdb.credits.crew[i].profile_path %>">
+                            <% } else { %>
+                                <img class="img-responsive" src="/img/missing.jpg">
+                            <% } %>
+                            <a href="/movie/artist/<%= tmdb.credits.crew[i].id %>">
+                                <p><%= tmdb.credits.crew[i].name %></p>
+                            </a>
+                            <p><%= tmdb.credits.crew[i].job %></p>
+                        </div>
+                    <% } %>
+                </div>
+
+                <% if (tmdb.videos && tmdb.videos.results.length > 0) { %>
+                    <div class="row text-center videoWrapper">
+                        <iframe
+                            id="ytplayer"
+                            type="text/html"
+                            width="480"
+                            height="360"
+                            allowfullscreen="allowfullscreen"
+                            mozallowfullscreen="mozallowfullscreen"
+                            msallowfullscreen="msallowfullscreen"
+                            oallowfullscreen="oallowfullscreen"
+                            webkitallowfullscreen="webkitallowfullscreen"
+                            src="https://www.youtube.com/embed/<%= tmdb.videos.results[0].key %>?autoplay=0&fs=1"
+                            frameborder="0"></iframe>
+                    </div>
+                <% } %>
+
+                <div class="row">
+                    <h2>Versions disponibles</h2>
+                    <table style="width:100%">
+                        <tr>
+                            <th>Nom</th>
+                            <th>Qualité Vidéo</th>
+                            <th>Codec Vidéo</th>
+                            <th>Qualité Audio</th>
+                            <th>Taille</th>
+                            <th>Lien</th>
+                        </tr>
+
+                        <% for(var i = 0; i < t411.length; i++) { %>
+                            <tr>
+                                <td><%= t411[i].name %></td>
+                                <td><%= t411[i].parsedInfo.qualVideo %></td>
+                                <td><%= t411[i].parsedInfo.codecVideo %></td>
+                                <td><%= t411[i].parsedInfo.qualAudio %></td>
+                                <td><%= t411[i].size %></td>
+                                <td>
+                                    <a class="btn btn-primary" href="/movie/watch/<%= t411[i].id %>">Regarder</a>
+                                </td>
+                            </tr>
+                        <% } %>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+            <script type="text/javascript">
+                $(document).ready(function() {
+                    $('body').addClass('loaded');
+                });
+            </script>
+            <% include ../partials/footer %>
+        </footer>
+
+    </body>
+
+</html>

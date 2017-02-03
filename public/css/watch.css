@@ -1,0 +1,16 @@
+#videoContainer {
+    width: inherit;
+    height: auto;
+}
+
+#loading-text {
+    color: white;
+    position: absolute;
+}
+#loading-text {
+    z-index: 10000;
+    text-align: center;
+    width: 100%;
+    margin: auto;
+    position: absolute;
+}

@@ -1,0 +1,119 @@
+<!-- views/pages/index.ejs -->
+
+<!DOCTYPE html>
+<html lang="fr">
+
+    <head>
+        <% include ../partials/head %>
+        <title>Studio411 - Accueil</title>
+        <link rel="stylesheet" href="./css/top.css">
+    </head>
+
+    <body class="container">
+
+        <header>
+            <% include ../partials/header %>
+        </header>
+
+        <main>
+            <div id="loader-wrapper">
+                <div id="loader"></div>
+
+                <div class="loader-section section-left"></div>
+                <div class="loader-section section-right"></div>
+
+            </div>
+            <% if (locals.movies) { %>
+
+                <div id="contenaire" class="jumbotron">
+                    <h1>Film</h1>
+                    <div class="film">
+                        <% for(var i = 0; i < movies.length; i+=3) { %>
+                            <div class="row row-eq-height">
+                                <% for(var j = i; j < i + 3; j++) { %>
+                                    <% if (j < movies.length) { %>
+                                        <div class="col-md-4 col-xs vertical-center">
+                                            <a href="./movie/<%= movies[j].tmdb.id %>">
+                                                <div class="desc-container movie-container">
+                                                    <p class="desc"><%= movies[j].tmdb.overview %></p>
+                                                    <a href="./movie/<%= movies[j].tmdb.id %>">
+                                                        <button class="btn btn-primary">Regarder le film</button>
+                                                    </a>
+                                                </div>
+
+                                                <div class="movie-container">
+                                                    <% if (movies[j].tmdb.poster_path) { %>
+                                                        <img class="img-responsive" src="https://image.tmdb.org/t/p/w342/<%= movies[j].tmdb.poster_path %>" data-adaptive-background='1'>
+                                                    <% } else { %>
+                                                        <img class="img-responsive" src="./img/missing.jpg">
+                                                    <% } %>
+                                                    <p class="name text-center"><%= movies[j].tmdb.title %></p>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    <% } %>
+                                <% } %>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <h1>Série TV</h1>
+                    <div class="series">
+                        <% for(var i = 0; i < series.length; i+=3) { %>
+                            <div class="row row-eq-height">
+                                <% for(var j = i; j < i + 3; j++) { %>
+                                    <% if (j < series.length) { %>
+                                        <div class="col-md-4 col-xs vertical-center">
+                                            <a href="./movie/<%= series[j].tmdb.id %>">
+                                                <div class="desc-container serie-container">
+                                                    <p class="desc"><%= series[j].tmdb.overview %></p>
+                                                    <a href="./tvShow/<%= series[j].tmdb.id %>">
+                                                        <button class="btn btn-primary">Regarder la série</button>
+                                                    </a>
+                                                </div>
+
+                                                <div class="serie-container">
+                                                    <% if (series[j].tmdb.poster_path) { %>
+                                                        <img class="img-responsive" src="https://image.tmdb.org/t/p/w342/<%= series[j].tmdb.poster_path %>" data-adaptive-background='1'>
+                                                    <% } else { %>
+                                                        <img class="img-responsive" src="./img/missing.jpg">
+                                                    <% } %>
+                                                    <p class="name text-center"><%= series[j].tmdb.name %></p>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    <% } %>
+                                <% } %>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+
+            <% } else { %>
+                <h2>Chargement en cours...</h2>
+                <script type="text/javascript">
+                    setTimeout(function() {
+                        location.reload();
+                    }, 5000);
+                </script>
+            <% } %>
+        </main>
+
+        <footer>
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+            <script type="text/javascript" src="./js/adaptavie-color.js"></script>
+            <script type="text/javascript">
+                $(document).ready(function() {
+                    $.adaptiveBackground.run({
+                        success: function() {
+                            $('body').addClass('loaded');
+                        }
+                    });
+                });
+            </script>
+            <% include ../partials/footer %>
+        </footer>
+
+    </body>
+
+</html>
